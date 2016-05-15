@@ -20,6 +20,8 @@
 
 #include "debug.h"
 
+using namespace std;
+
 namespace edbee {
 
 
@@ -29,6 +31,9 @@ TextDocument::TextDocument( QObject* obj )
     , documentFilter_(0)
     , documentFilterRef_(0)
 {
+    changedLines_ = new QList<int>();
+    changedLines_->append(1);
+    
 }
 
 
@@ -73,8 +78,7 @@ TextLineData* TextDocument::getLineData(int line, int field)
     Q_ASSERT( line < len );
     return lineDataManager()->get( line, field );
 }
-
-
+    
 /// Starts an undo group
 /// @param group the textchange group that groups the undo operations
 void TextDocument::beginUndoGroup(ChangeGroup* group)
@@ -97,7 +101,7 @@ void TextDocument::endUndoGroup( int coalesceId, bool flatten)
 //    }
     textUndoStack()->endUndoGroup(coalesceId,flatten);
 }
-
+    
 
 /// Ends the undo group and discards all recorded information
 /// Warning it doesn NOT undo all made changes!!!
@@ -304,7 +308,21 @@ void TextDocument::setText(const QString& text)
 {
     replace( 0, length(), text, 0 );
 }
+    
+void TextDocument::setDiffs(list<diff_match_patch<string>::Diff> diffs)
+{
+    diffs_ = diffs;
+}
 
+void TextDocument::setDiffLookup(QVector<QVector<diff_match_patch<string>::Diff*>> lookup)
+{
+    diffLookup_ = lookup;
+}
+    
+void TextDocument::setDiffStatus(QVector<int> *lineStatus)
+{
+    lineStatus_ = lineStatus;
+}
 
 /// begins the raw append modes. In raw append mode data is directly streamed
 /// to the textdocument-buffer. No undo-data is collected and no events are fired
@@ -345,6 +363,41 @@ int TextDocument::length()
     return buffer()->length();
 }
 
+    
+int TextDocument::getLineStatus(int lineIndex)
+{
+    QVector<stringdiff::Diff*> diffs = diffLookup_.at(lineIndex);
+    
+    // TODO: this would be cool
+    //if any_of(diffs.cbegin(), diffs.cend(), [](<diff_match_patch<string>::Diff* diff){ return })
+    bool inserted = false;
+    bool deleted = false;
+    for (int i = 0; i < diffs.size(); ++i) {
+        stringdiff::Diff* diff = diffs.at(i);
+        
+        if (diff != NULL) {
+        
+            qDebug() << "line" << lineIndex << "diff" << i << "op" << diff->operation;// << "txt";// << diff->text;
+            
+            if (diff->operation == stringdiff::DELETE) {
+                deleted = true;
+            }
+            if (diff->operation == stringdiff::INSERT) {
+                inserted = true;
+            }
+        }
+    }
+    qDebug() << "line" << lineIndex << " deleted and inserted are" << deleted << inserted;
+    if (deleted && inserted) return 3;
+    if (inserted) return 2;
+    if (deleted) return 1;
+    return 0;
+}
+    
+bool TextDocument::lineHasChanged(int lineIndex)
+{
+    return lineIndex <= lineStatus_->size() && lineStatus_->at(lineIndex) != 0;
+}
 
 /// Returns the number of lines
 int TextDocument::lineCount()
@@ -464,6 +517,7 @@ QString TextDocument::line(int line)
 {
     return buffer()->line(line);
 }
+
 
 
 } // edbee

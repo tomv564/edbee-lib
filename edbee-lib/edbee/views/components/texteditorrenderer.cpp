@@ -70,8 +70,28 @@ void TextEditorRenderer::render(QPainter *painter)
 
 void TextEditorRenderer::renderLineBackground(QPainter *painter,int line)
 {
-    Q_UNUSED(line);
-    Q_UNUSED(painter);
+//    Q_UNUSED(line);
+//    Q_UNUSED(painter);
+    int lineHeight = renderer()->lineHeight();
+    int viewportWidth = renderer()->viewportWidth();
+    QColor insertedColor = QColor(0, 66, 0);
+    QColor changedColor = QColor(255, 255, 204);
+    QColor deletedColor = QColor(66, 0, 0);
+    
+    TextDocument* doc = renderer()->textDocument();
+    int changeType = doc->getLineStatus(line);
+
+    if (changeType > 0) {
+        QColor lineColor;
+        if (changeType == 1) lineColor = deletedColor;
+        if (changeType == 2) lineColor = insertedColor;
+        if (changeType == 3) lineColor = changedColor;
+        
+        QTextLayout* textLayout = renderer()->textLayoutForLine(line);
+        QRectF rect = textLayout->boundingRect();
+        
+        painter->fillRect(0, line*lineHeight + rect.top(), viewportWidth, lineHeight, lineColor );
+    }
 }
 
 

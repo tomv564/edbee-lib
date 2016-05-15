@@ -57,8 +57,7 @@ public:
         Q_ASSERT(lineEnding);
         lineEndingRef_ = lineEnding;
     }
-
-
+    
     ///  Should return the current document lexer
     virtual TextLexer* textLexer() { return textLexer_; }
 
