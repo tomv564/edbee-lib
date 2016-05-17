@@ -244,7 +244,8 @@ QTextLayout *TextRenderer::textLayoutForLine(int line)
             option.setFlags( QTextOption::ShowTabsAndSpaces );        /// TODO: Make an option to show spaces and tabs
         }
 
-          textLayout->setFont( textWidget()->font() );
+        textLayout->setFont( textWidget()->font() );
+		
 //qlog_info() << "font: " <<   textWidget()->();
         textLayout->setTextOption( option );
 
