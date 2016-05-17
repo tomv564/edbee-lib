@@ -115,12 +115,8 @@ public:
     void giveSelection( TextEditorController* controller,  TextRangeSet* rangeSet);
     void endChanges( int coalesceId );
 
-    bool lineHasChanged (int line );
-    int getLineStatus (int line);
-    
-    void setDiffs(list<diff_match_patch<string>::Diff> diffs);
-    void setDiffStatus(QVector<int>* lineStatus);
-    void setDiffLookup(QVector<QVector<diff_match_patch<string>::Diff*>> lookup);
+    int getLineStatus (int line);    
+    void setDiffLookup(QVector<QVector<diff_match_patch<string>::Diff>> lookup);
     
     void executeAndGiveChange(Change* change , int coalesceId );
 
@@ -173,11 +169,7 @@ signals:
 
 private:
 
-    QList<int>* changedLines_;                          ///< For diff support
-    list<stringdiff::Diff> diffs_;
-    QVector<QVector<stringdiff::Diff*>> diffLookup_;
-
-    QVector<int>* lineStatus_ = new QVector<int>(0);
+    QVector<QVector<stringdiff::Diff>> diffLookup_;
 
     TextDocumentFilter* documentFilter_;             ///< The document filter if the filter is owned
     TextDocumentFilter* documentFilterRef_;          ///< The reference to the document filter.
