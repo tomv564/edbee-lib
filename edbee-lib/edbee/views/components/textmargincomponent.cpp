@@ -222,6 +222,11 @@ void TextMarginComponent::giveDelegate(TextMarginComponentDelegate* delegate)
     delegate_ = delegate;
 }
 
+void TextMarginComponent::renderLineBackgrounds(QPainter* painter, int startLine, int endLine, int width)
+{
+	
+}
+
 void TextMarginComponent::paintEvent(QPaintEvent* event)
 {
     QWidget::paintEvent(event);
@@ -249,8 +254,13 @@ void TextMarginComponent::paintEvent(QPaintEvent* event)
     painter.fillRect( rect,  renderer()->theme()->backgroundColor() );
 
     delegate()->renderBefore( &painter, startLine, endLine, size.width() );
-    renderCaretMarkers( &painter, startLine, endLine, size.width() );
-    renderLineNumber( &painter, startLine, endLine, size.width() );
+	renderLineBackgrounds(&painter, startLine, endLine, size.width());
+
+	bool DIFF_MODE = 1;
+	if (!DIFF_MODE) {
+		renderCaretMarkers(&painter, startLine, endLine, size.width());
+	}
+	renderLineNumber( &painter, startLine, endLine, size.width() );
     delegate()->renderAfter( &painter, startLine, endLine, size.width() );
 
     renderer()->renderEnd( paintRect );

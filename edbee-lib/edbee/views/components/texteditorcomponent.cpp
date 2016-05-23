@@ -279,10 +279,12 @@ void TextEditorComponent::keyPressEvent(QKeyEvent* event)
     // not partial, not found, clear the mark
     lastKeySequence_ = QKeySequence();
 
-    // else replace the selection if there's a text
+	bool DIFF_MODE = 1;
+
+	// else replace the selection if there's a text
     QString text = event->text();
     bool specialKey =(modifiers&(Qt::MetaModifier|Qt::ControlModifier));
-    if( !text.isEmpty() && !specialKey ) {
+    if( !text.isEmpty() && !specialKey && !DIFF_MODE) {
         // last character is used for "undo-group after" space support
         if( this->config()->undoGroupPerSpace() ) {
             if( text.compare(" ") == 0 && lastCharacter_.compare(" ") != 0  ) {
@@ -324,6 +326,9 @@ void TextEditorComponent::keyReleaseEvent(QKeyEvent *event)
 
 void TextEditorComponent::inputMethodEvent( QInputMethodEvent* m )
 {
+	bool DIFF_MODE = 1;
+	if (DIFF_MODE) return;
+
    // replace the selection with an empty text
     if( textSelection()->hasSelection() ) {
         controller()->replaceSelection("",false);
@@ -475,6 +480,9 @@ void TextEditorComponent::contextMenuEvent(QContextMenuEvent* event)
 /// This method repaints 'all' carets
 void TextEditorComponent::repaintCarets()
 {
+	bool DIFF_MODE = 1;
+	if (DIFF_MODE) return;
+
     bool visible = textRenderer()->isCaretVisible();
     bool focus = hasFocus();
     if( focus != visible ) {

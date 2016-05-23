@@ -75,6 +75,7 @@ protected:
     virtual void paintEvent( QPaintEvent* event );
     virtual void renderCaretMarkers( QPainter* painter, int startLine, int endLine, int width );
     virtual void renderLineNumber( QPainter* painter, int startLine, int endLine, int width );
+	virtual void renderLineBackgrounds(QPainter* painter, int startLine, int endLine, int width);
 
     virtual void mouseMoveEvent(QMouseEvent* event);
     virtual void mousePressEvent(QMouseEvent* event);
