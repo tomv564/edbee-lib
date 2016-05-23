@@ -74,10 +74,16 @@ void TextEditorRenderer::renderLineBackground(QPainter *painter,int line)
 //    Q_UNUSED(painter);
     int lineHeight = renderer()->lineHeight();
     int viewportWidth = renderer()->viewportWidth();
-    QColor insertedColor = QColor(0, 66, 0);
+	qDebug() << "line background width" << viewportWidth;
+	QColor baseColor = themeRef_->backgroundColor();
+	QColor insertedColor = QColor(baseColor);
+	insertedColor.setGreen(baseColor.green() + 30); // QColor(0, 66, 0);
+
     QColor changedColor = QColor(255, 255, 204);
-    QColor deletedColor = QColor(66, 0, 0);
-    
+	QColor deletedColor = QColor(baseColor);
+	deletedColor.setRed(baseColor.red() + 30);
+	
+
     TextDocument* doc = renderer()->textDocument();
     int changeType = doc->getLineStatus(line);
 

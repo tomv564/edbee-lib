@@ -224,7 +224,26 @@ void TextMarginComponent::giveDelegate(TextMarginComponentDelegate* delegate)
 
 void TextMarginComponent::renderLineBackgrounds(QPainter* painter, int startLine, int endLine, int width)
 {
-	
+	TextDocument* doc = renderer()->textDocument();
+	int lineHeight = renderer()->lineHeight();
+
+	QColor insertedColor = QColor(0, 66, 0);
+	QColor changedColor = QColor(255, 255, 204);
+	QColor deletedColor = QColor(66, 0, 0);
+
+	for (int line = startLine; line <= endLine; ++line) {
+
+		int changeType = doc->getLineStatus(line);
+
+		if (changeType > 0) {
+			QColor lineColor;
+			if (changeType == 1) lineColor = deletedColor;
+			if (changeType == 2) lineColor = insertedColor;
+			if (changeType == 3) lineColor = changedColor;
+
+			painter->fillRect(0, line*lineHeight, width, lineHeight, lineColor);
+		}
+	}
 }
 
 void TextMarginComponent::paintEvent(QPaintEvent* event)
