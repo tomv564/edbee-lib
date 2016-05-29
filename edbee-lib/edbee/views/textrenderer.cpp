@@ -380,6 +380,7 @@ TextEditorWidget *TextRenderer::textWidget()
 /// Sets the current viewport of the renderer
 void TextRenderer::setViewport(const QRect& viewport)
 {
+	qDebug() << "Viewport set to" << viewport_.width();
     viewport_ = viewport;
 }
 

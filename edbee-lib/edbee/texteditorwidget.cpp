@@ -61,6 +61,7 @@ TextEditorWidget::TextEditorWidget( QWidget* parent)
     // setup the ui
     scrollAreaRef_ = new class TextEditorScrollArea(this);
     scrollAreaRef_->setWidgetResizable(true);
+	//scrollAreaRef_->setLayoutDirection(Qt::RightToLeft);
 
     editCompRef_   = new TextEditorComponent( controller_, scrollAreaRef_);
     marginCompRef_ = new TextMarginComponent( this, scrollAreaRef_ );

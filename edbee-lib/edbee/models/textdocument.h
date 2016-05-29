@@ -116,6 +116,7 @@ public:
     void endChanges( int coalesceId );
 
     int getLineStatus (int line);    
+	QVector<stringdiff::Diff> TextDocument::getLineDiffs(int lineIndex);
     void setDiffLookup(QVector<QVector<diff_match_patch<string>::Diff>> lookup);
     
     void executeAndGiveChange(Change* change , int coalesceId );

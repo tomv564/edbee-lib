@@ -70,36 +70,57 @@ void TextEditorRenderer::render(QPainter *painter)
 
 void TextEditorRenderer::renderLineBackground(QPainter *painter,int line)
 {
-//    Q_UNUSED(line);
-//    Q_UNUSED(painter);
     int lineHeight = renderer()->lineHeight();
     int viewportWidth = renderer()->viewportWidth();
 	qDebug() << "line background width" << viewportWidth;
 	QColor baseColor = themeRef_->backgroundColor();
 	QColor insertedColor = QColor(baseColor);
 	insertedColor.setGreen(baseColor.green() + 30); // QColor(0, 66, 0);
-
-    QColor changedColor = QColor(255, 255, 204);
+	QColor changedColor = baseColor.darker(120);
+	//changedColor.darker(50);
+    //QColor changedColor = QColor(255, 255, 204);
 	QColor deletedColor = QColor(baseColor);
 	deletedColor.setRed(baseColor.red() + 30);
+	QColor editColor = QColor(200, 200, 152);
 	
 
     TextDocument* doc = renderer()->textDocument();
-    int changeType = doc->getLineStatus(line);
-
-    if (changeType > 0) {
+    //int changeType = doc->getLineStatus(line);
+	auto diffs = doc->getLineDiffs(line);
+    if (diffs.count() > 1) {
         QColor lineColor;
-        if (changeType == 1) lineColor = deletedColor;
-        if (changeType == 2) lineColor = insertedColor;
-        if (changeType == 3) lineColor = changedColor;
-        
+        //if (changeType == 1) lineColor = deletedColor;
+        //if (changeType == 2) lineColor = insertedColor;
+        //if (changeType == 3) lineColor = changedColor;
+
+		lineColor = changedColor;
         QTextLayout* textLayout = renderer()->textLayoutForLine(line);
         QRectF rect = textLayout->boundingRect();
         
         painter->fillRect(0, line*lineHeight + rect.top(), viewportWidth, lineHeight, lineColor );
+
+		int offset = 0;
+		for (int i = 0; i < diffs.count(); ++i)
+		{
+			// add sub-line diffs.
+			auto diff = diffs[i];
+			if (diff.operation != stringdiff::EQUAL)
+			{
+				auto textLine = textLayout->lineAt(0);
+				auto lineCount = textLayout->lineCount();
+				if (textLine.isValid()) {
+					auto startX = textLine.cursorToX(offset);
+					auto endX = textLine.cursorToX(offset + diff.text.length());
+					painter->fillRect(startX, line*lineHeight + rect.top(), endX - startX, lineHeight, editColor);
+				}
+			}
+
+			offset += diff.text.length();
+		}
+
+		
     }
 }
-
 
 void TextEditorRenderer::renderLineSelection(QPainter *painter,int line)
 {

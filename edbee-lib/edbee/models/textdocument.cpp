@@ -350,6 +350,11 @@ int TextDocument::length()
     return buffer()->length();
 }
 
+
+QVector<stringdiff::Diff> TextDocument::getLineDiffs(int lineIndex)
+{
+	return diffLookup_.at(lineIndex);
+}
     
 int TextDocument::getLineStatus(int lineIndex)
 {

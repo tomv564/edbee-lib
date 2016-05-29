@@ -222,13 +222,15 @@ void TextMarginComponent::giveDelegate(TextMarginComponentDelegate* delegate)
     delegate_ = delegate;
 }
 
+//TODO: merge this color behaviour with the texteditor's.
 void TextMarginComponent::renderLineBackgrounds(QPainter* painter, int startLine, int endLine, int width)
 {
 	TextDocument* doc = renderer()->textDocument();
 	int lineHeight = renderer()->lineHeight();
+	QColor baseColor = renderer()->theme()->backgroundColor();
 
 	QColor insertedColor = QColor(0, 66, 0);
-	QColor changedColor = QColor(255, 255, 204);
+	QColor changedColor = baseColor.darker(120);
 	QColor deletedColor = QColor(66, 0, 0);
 
 	for (int line = startLine; line <= endLine; ++line) {
@@ -236,12 +238,13 @@ void TextMarginComponent::renderLineBackgrounds(QPainter* painter, int startLine
 		int changeType = doc->getLineStatus(line);
 
 		if (changeType > 0) {
-			QColor lineColor;
-			if (changeType == 1) lineColor = deletedColor;
-			if (changeType == 2) lineColor = insertedColor;
-			if (changeType == 3) lineColor = changedColor;
+			//QColor lineColor;
+			//
+			//if (changeType == 1) lineColor = deletedColor;
+			//if (changeType == 2) lineColor = insertedColor;
+			//if (changeType == 3) lineColor = changedColor;
 
-			painter->fillRect(0, line*lineHeight, width, lineHeight, lineColor);
+			painter->fillRect(0, line*lineHeight, width, lineHeight, baseColor);
 		}
 	}
 }
